@@ -9,14 +9,14 @@ const mongoUrl = process.env.MONGO_URL;
 async function scrapeTwitter() {
   let driver = await new Builder().forBrowser('chrome').build();
   try {
-    // Login to Twitter
+   
     await driver.get(twitterLoginUrl);
     
-    await driver.wait(until.elementLocated(By.name('text')), 10000).sendKeys(process.env.TWITTER_USERNAME);
-    await driver.findElement(By.css('div[role="button"][data-testid="ocfEnterTextNextButton"]')).click();
+    await driver.wait(until.elementLocated(By.xpath("//input[@name='text']")), 10000).sendKeys(process.env.TWITTER_USERNAME);
+    await driver.findElement(By.xpath("//span[contains(text(),'Next')]")).click();
 
-    await driver.wait(until.elementLocated(By.name('password')), 10000).sendKeys(process.env.TWITTER_PASSWORD);
-    await driver.findElement(By.css('div[role="button"][data-testid="ocfEnterPasswordNextButton"]')).click();
+    await driver.wait(until.elementLocated(By.xpath("//input[@name='password']")), 10000).sendKeys(process.env.TWITTER_PASSWORD);
+    await driver.findElement(By.xpath("//span[contains(text(),'Log in')]")).click();
 
     // Wait until home page is loaded
     await driver.wait(until.urlIs(twitterHomeUrl), 10000);
