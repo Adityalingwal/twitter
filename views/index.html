@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitter Trends</title>
+</head>
+<body>
+  <h1>Twitter Trends</h1>
+  <button id="run-scrape">Click here to run the script</button>
+  <div id="results"></div>
+
+  <script>
+    document.getElementById('run-scrape').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/run-scrape');
+        const result = await response.json();
+        console.log('Server Response:', result); // Log the response
+        displayResult(result);
+      } catch (error) {
+        console.error('Error fetching scrape results:', error);
+        document.getElementById('results').innerText = 'Failed to load results. Please try again later.';
+      }
+    });
+
+    async function displayResult(result) {
+      const resultDiv = document.getElementById('results');
+      if (!result || !result.trends) {
+        resultDiv.innerHTML = '<p>No trends found or error in response format.</p>';
+        return;
+      }
+      resultDiv.innerHTML = `
+        <p>These are the most happening topics as on ${new Date(result.date).toLocaleString()}:</p>
+        <ul>
+          ${result.trends.map(trend => `<li>${trend}</li>`).join('')}
+        </ul>
+        <p>The IP address used for this query was ${result.ip || 'N/A'}.</p>
+        <pre>${JSON.stringify(result, null, 2)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>
