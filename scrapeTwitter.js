@@ -4,6 +4,8 @@ const { MongoClient } = require('mongodb');
 
 const twitterLoginUrl = 'https://twitter.com/login';
 const twitterHomeUrl = 'https://twitter.com/home';
+const explore= 'https://twitter.com/explore/tabs/trending';
+
 const mongoUrl = process.env.MONGO_URL;
 
 async function scrapeTwitter() {
@@ -21,9 +23,15 @@ async function scrapeTwitter() {
     // Wait until home page is loaded
     await driver.wait(until.urlIs(twitterHomeUrl), 10000);
 
-    // Fetch top 5 trending topics - Update the selector based on the current structure
-    const trendsSection = await driver.findElement(By.css('section[aria-labelledby="accessible-list-0"]')); // This may need updating
-    const trends = await trendsSection.findElements(By.css('div[data-testid="primaryColumn"] div.tweet p')); // Updated selector
+        // Locate the "Explore" link using the corrected XPath
+        
+        let exploreLink = await driver.findElement(By.xpath("//a[@href='/explore' and @aria-label='Search and explore' and @role='link' and @data-testid='AppTabBar_Explore_Link']"));
+
+        // Click the "Explore" link
+        await exploreLink.click();
+
+        // Wait for the explore page to load
+        await driver.wait(until.urlIs(explore), 10000);
 
     const topTrends = [];
     for (let i = 0; i < 5 && i < trends.length; i++) {
